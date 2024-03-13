@@ -21,7 +21,7 @@ async function connectDB(dbName) {
         db.instance = client.db(dbName);
         const ordersCollection = db.instance.collection(process.env.ORDER_COLLECTION);
         collections.orders = ordersCollection;
-        collections.orders = db.instance.collection(process.env.ORDER_COLLECTION);
+        collections.users = db.instance.collection(process.env.USER_COLLECTION);
         console.log(`Successfully connected to database: ${db.instance.databaseName} and collection: ${ordersCollection.collectionName}`);
         return db;
     } catch (error) {

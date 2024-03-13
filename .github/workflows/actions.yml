@@ -46,6 +46,7 @@ jobs:
           DB_CONN_STRING: "mongodb://127.0.0.1:27017"
           ORDER_COLLECTION: "Order"
           USER_COLLECTION: "User"
+          JWT_SECRET: "secret_key"
           PORT: "4004"
 
       - name: Run EsLint quality check
@@ -76,6 +77,7 @@ jobs:
           DB_CONN_STRING: "mongodb://127.0.0.1:27017"
           ORDER_COLLECTION: "Order"
           USER_COLLECTION: "User"
+          JWT_SECRET: "secret_key"
           PORT: "4004"
 
       - name: SonarCloud Scan
