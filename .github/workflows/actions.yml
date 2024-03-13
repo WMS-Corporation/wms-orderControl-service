@@ -62,7 +62,10 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-
+      - name: Start MongoDB
+        uses: ankane/setup-mongodb@v1
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
       - name: Test and coverage
         run: npm run coverage
         env:
