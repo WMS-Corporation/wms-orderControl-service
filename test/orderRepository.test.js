@@ -1,7 +1,7 @@
 const {Order} = require("../src/entities/order")
 const path = require("path")
 const fs = require("fs")
-const {createOrder, getOrders} = require("../src/repositories/orderRepository");
+const {createOrder, getOrders, findOrderByCode} = require("../src/repositories/orderRepository");
 const {connectDB, collections, closeDB} = require("../src/config/dbConnection");
 
 describe('orderRepository testing', () => {
@@ -45,6 +45,19 @@ describe('orderRepository testing', () => {
         const numDoc = await collections.orders.countDocuments()
         expect(result.length).toEqual(numDoc)
     })
+
+    it('should find an order by code', async () => {
+        const order = await findOrderByCode("000549")
+        expect(order._status).toEqual("pending")
+        expect(order._date).toEqual("20/03/2023")
+    });
+
+    it('should return null if order is not found', async () => {
+        const codOrder = '000123'
+        const order = await findOrderByCode(codOrder)
+
+        expect(order).toBeNull()
+    });
 
 
 });

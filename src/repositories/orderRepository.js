@@ -25,7 +25,20 @@ const getOrders = asyncHandler(async () => {
     return await collections?.orders?.find().toArray()
 })
 
+/**
+ * Finds an order by code.
+ *
+ * This function queries the database to find an order based on the provided code.
+ *
+ * @param {string} codOrder - The code of the order to find.
+ * @returns {Object|null} The task object if found, or null if not found.
+ */
+const findOrderByCode = asyncHandler(async (codOrder) => {
+    return await collections?.orders?.findOne({ _codOrder: codOrder })
+});
+
 module.exports = {
     createOrder,
-    getOrders
+    getOrders,
+    findOrderByCode
 }

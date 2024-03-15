@@ -2,7 +2,7 @@ const dotenv = require('dotenv')
 const path = require("path")
 const fs = require("fs")
 const {connectDB, collections, closeDB} = require("../src/config/dbConnection");
-const {generateOrder, getAll} = require("../src/services/orderServices");
+const {generateOrder, getAll, getOrderByCode} = require("../src/services/orderServices");
 
 dotenv.config()
 const mockResponse = () => {
@@ -88,5 +88,30 @@ describe('Order services testing', () => {
         expect(res.json).not.toBeNull()
     })
 
+    it('it should return 200 and the order with the code specified', async ()=>{
+        const res=mockResponse()
+        req.params = { codOrder: "000549" }
 
+        await getOrderByCode(req, res)
+        expect(res.status).toHaveBeenCalledWith(200)
+        expect(res.json).not.toBeNull()
+    })
+
+    it('it should return 401 if the code is wrong', async ()=>{
+        const res=mockResponse()
+        req.params = { codOrder: "000877" }
+
+        await getOrderByCode(req, res)
+        expect(res.status).toHaveBeenCalledWith(401)
+        expect(res.json).toHaveBeenCalledWith({message: "Order not found"})
+    })
+
+    it('it should return 401 if the code is not specified', async ()=>{
+        const res=mockResponse()
+        req.params = { codOrder: "" }
+
+        await getOrderByCode(req, res)
+        expect(res.status).toHaveBeenCalledWith(401)
+        expect(res.json).toHaveBeenCalledWith({message: "Invalid order data"})
+    })
 });
