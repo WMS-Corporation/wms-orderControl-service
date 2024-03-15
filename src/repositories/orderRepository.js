@@ -14,6 +14,18 @@ const createOrder = asyncHandler(async (order) => {
     return await collections?.orders?.insertOne(order)
 });
 
+/**
+ * Retrieves all orders.
+ *
+ * This function handles the retrieval of all orders from the database.
+ *
+ * @returns {Array|null} An array containing order data if retrieval is successful, otherwise null.
+ */
+const getOrders = asyncHandler(async () => {
+    return await collections?.orders?.find().toArray()
+})
+
 module.exports = {
-    createOrder
+    createOrder,
+    getOrders
 }

@@ -1,7 +1,7 @@
 const {db} = require("../config/dbConnection");
 const asyncHandler = require("express-async-handler");
 const {createOrderFromData} = require("../factories/orderFactory");
-const {createOrder} = require("../repositories/orderRepository");
+const {createOrder, getOrders} = require("../repositories/orderRepository");
 
 /**
  * Generate a new order.
@@ -31,6 +31,27 @@ const generateOrder = asyncHandler(async(req, res) => {
 })
 
 /**
+ * Retrieves all orders.
+ *
+ * This function handles the retrieval of all orders from the database.
+ * It calls the getOrders function to fetch the order data.
+ * If the retrieval is successful, it returns the order data with HTTP status code 200 (OK).
+ * If the retrieval fails (e.g., invalid order data), it returns an error message with HTTP status code 401 (Unauthorized).
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} The HTTP response containing either the order data or an error message in JSON format.
+ */
+const getAll = asyncHandler(async(req, res) => {
+    const result = await getOrders()
+    if(result){
+        res.status(200).json(result)
+    } else {
+        res.status(401).json({message: 'Invalid order data'})
+    }
+})
+
+/**
  * Generates a unique order code.
  *
  * This function generates a unique order code by counting the total number of documents across all collections in the database.
@@ -54,5 +75,6 @@ const generateUniqueOrderCode = asyncHandler (async () => {
 })
 
 module.exports = {
-    generateOrder
+    generateOrder,
+    getAll
 }

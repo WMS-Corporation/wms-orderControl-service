@@ -2,7 +2,7 @@ const dotenv = require('dotenv')
 const path = require("path")
 const fs = require("fs")
 const {connectDB, collections, closeDB} = require("../src/config/dbConnection");
-const {generateOrder} = require("../src/services/orderServices");
+const {generateOrder, getAll} = require("../src/services/orderServices");
 
 dotenv.config()
 const mockResponse = () => {
@@ -78,6 +78,15 @@ describe('Order services testing', () => {
 
         expect(res.status).toHaveBeenCalledWith(200)
     });
+
+    it('it should return 200 and all orders that are stored', async() =>{
+        const res=mockResponse()
+
+        await getAll(req, res)
+
+        expect(res.status).toHaveBeenCalledWith(200)
+        expect(res.json).not.toBeNull()
+    })
 
 
 });

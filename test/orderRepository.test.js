@@ -1,7 +1,7 @@
 const {Order} = require("../src/entities/order")
 const path = require("path")
 const fs = require("fs")
-const {createOrder} = require("../src/repositories/orderRepository");
+const {createOrder, getOrders} = require("../src/repositories/orderRepository");
 const {connectDB, collections, closeDB} = require("../src/config/dbConnection");
 
 describe('orderRepository testing', () => {
@@ -40,7 +40,11 @@ describe('orderRepository testing', () => {
         expect(result).toBeDefined()
     })
 
-
+    it('should return all the orders', async() => {
+        const result= await getOrders()
+        const numDoc = await collections.orders.countDocuments()
+        expect(result.length).toEqual(numDoc)
+    })
 
 
 });
