@@ -1,7 +1,7 @@
 const {Order} = require("../src/entities/order")
 const path = require("path")
 const fs = require("fs")
-const {createOrder, getOrders, findOrderByCode} = require("../src/repositories/orderRepository");
+const {createOrder, getOrders, findOrderByCode, updateOrderData} = require("../src/repositories/orderRepository");
 const {connectDB, collections, closeDB} = require("../src/config/dbConnection");
 
 describe('orderRepository testing', () => {
@@ -59,5 +59,19 @@ describe('orderRepository testing', () => {
         expect(order).toBeNull()
     });
 
+    it('should return an updated order with new status', async() => {
+        const filter = { _codOrder: "000549" }
+        const update = { $set: { _status: "Completed" } }
 
+        const updatedOrder = await updateOrderData(filter, update)
+        expect(updatedOrder._status).toEqual("Completed")
+    })
+
+    it('should return null if the filter is not correct', async() => {
+        const filter = { _codOrder: "" }
+        const update = { $set: { _status: "Completed" } }
+
+        const updatedOrder = await updateOrderData(filter, update)
+        expect(updatedOrder).toBeNull()
+    })
 });

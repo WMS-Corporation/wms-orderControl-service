@@ -37,8 +37,24 @@ const findOrderByCode = asyncHandler(async (codOrder) => {
     return await collections?.orders?.findOne({ _codOrder: codOrder })
 });
 
+/**
+ * Updates order data based on a filter.
+ *
+ * This function updates order data based on the provided filter criteria and the update object.
+ *
+ * @param {Object} filter - The filter criteria to find the order(s) to update.
+ * @param {Object} update - The update object containing the fields to update and their new values.
+ * @returns {Object|null} The updated order data if the user is found, otherwise null.
+ */
+const updateOrderData = asyncHandler(async(filter, update) => {
+    const options = { returnOriginal: false}
+    await collections?.orders?.findOneAndUpdate(filter, update, options)
+    return await collections?.orders?.findOne(filter)
+})
+
 module.exports = {
     createOrder,
     getOrders,
-    findOrderByCode
+    findOrderByCode,
+    updateOrderData
 }

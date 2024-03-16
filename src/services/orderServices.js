@@ -1,7 +1,7 @@
 const {db} = require("../config/dbConnection");
 const asyncHandler = require("express-async-handler");
 const {createOrderFromData} = require("../factories/orderFactory");
-const {createOrder, getOrders, findOrderByCode} = require("../repositories/orderRepository");
+const {createOrder, getOrders, findOrderByCode, updateOrderData} = require("../repositories/orderRepository");
 
 /**
  * Generate a new order.
@@ -80,6 +80,37 @@ const getOrderByCode = asyncHandler(async (req, res) => {
 })
 
 /**
+ * Updates order data by code.
+ *
+ * This function updates the order data based on the provided order code.
+ * It extracts the order code from the request parameters.
+ * If the order code is provided, it retrieves the order data using findOrderByCode function.
+ * If the order is found, it updates the order data in the database and returns the updated order data with HTTP status code 200 (OK).
+ * If the order is not found, it returns an error message with HTTP status code 401 (Unauthorized).
+ * If the order code is invalid or missing, it returns an error message with HTTP status code 401 (Unauthorized).
+ *
+ * @param {Object} req - The request object containing order data.
+ * @param {Object} res - The response object used to send the response.
+ * @returns {Object} The HTTP response containing either the updated order data or an error message in JSON format.
+ */
+const updateOrderByCode = asyncHandler(async (req, res) => {
+    const codOrder = req.params.codOrder
+    if(codOrder){
+        const order = await findOrderByCode(codOrder)
+        if(order){
+            const filter = { _codOrder: codOrder }
+            const update = { $set: req.body}
+            const updatedOrder = await updateOrderData(filter, update)
+            res.status(200).json(updatedOrder)
+        } else{
+            res.status(401).json({message: 'Order not found'})
+        }
+    }else{
+        res.status(401).json({message:'Invalid order data'})
+    }
+})
+
+/**
  * Generates a unique order code.
  *
  * This function generates a unique order code by counting the total number of documents across all collections in the database.
@@ -105,5 +136,6 @@ const generateUniqueOrderCode = asyncHandler (async () => {
 module.exports = {
     generateOrder,
     getAll,
-    getOrderByCode
+    getOrderByCode,
+    updateOrderByCode
 }
