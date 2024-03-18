@@ -9,7 +9,9 @@
     "coverage": "npm test -- --coverage --collectCoverageFrom=\"./**/*.js\" --collectCoverageFrom=!\"./**/coverage/**/*.js\" --collectCoverageFrom=!./.eslintrc.js \n",
     "prepare": "husky",
     "eslint": "npx eslint .",
-    "format": "npx eslint --fix .\\*.js"
+    "format": "npm run format-src && npm run format-test",
+    "format-src": "npx eslint --fix .\\*.js",
+    "format-test": "npx eslint --fix .\\test\\*.js"
   },
   "author": "",
   "license": "ISC",
