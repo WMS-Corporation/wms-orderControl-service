@@ -17,7 +17,7 @@ const {createOrder, getOrders, findOrderByCode, updateOrderData} = require("../r
  */
 const generateOrder = asyncHandler(async(req, res) => {
     const order = createOrderFromData(req.body)
-    if( !order.date || !order.status || !order.productList){
+    if( !order.date || !order.status || !order.productCodeList){
         return res.status(401).json({ message: 'Invalid order data' })
     }
 

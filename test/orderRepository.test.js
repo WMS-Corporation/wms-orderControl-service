@@ -19,29 +19,14 @@ describe('orderRepository testing', () => {
         await closeDB()
     });
 
-    it("should create a new task",async () =>{
-        let productList = [
-            {
-                "_codProduct": "00020",
-                "_name": "Loacker",
-                "_category": "Snack",
-                "_expirationDate": "01-01-2025",
-                "_type": "NoRefrigerated"
-            },
-            {
-                "_codProduct": "00024",
-                "_name": "Caffe Lavazza",
-                "_category": "Caffe",
-                "_expirationDate": "03-04-2024",
-                "_type": "NoRefrigerated"
-            }
-        ]
-        const result=await createOrder(new Order("24/03/2024","pending",productList,"000868"))
+    it("should create a new task", async ()  => {
+        let productCodeList = [ "00020", "00024"]
+        const result = await createOrder(new Order("24/03/2024", "pending", productCodeList, "000868"))
         expect(result).toBeDefined()
     })
 
     it('should return all the orders', async() => {
-        const result= await getOrders()
+        const result = await getOrders()
         const numDoc = await collections.orders.countDocuments()
         expect(result.length).toEqual(numDoc)
     })

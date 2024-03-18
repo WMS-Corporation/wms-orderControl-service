@@ -4,7 +4,7 @@ const {generateOrder, getAll, getOrderByCode, updateOrderByCode} = require("../s
 const router = express.Router();
 
 router.get('/', (req, res) => {
-    res.send('Hello World');
+    res.status(200).send('OK');
 })
 router.post('/generation', verifyToken, generateOrder)
 router.get('/all', verifyToken, getAll)

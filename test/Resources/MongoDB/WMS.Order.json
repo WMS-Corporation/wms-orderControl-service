@@ -1,22 +1,6 @@
 {
   "_date": "20/03/2023",
   "_status": "pending",
-  "_productList": [
-    {
-      "_codProduct": "00003",
-      "_name": "Spaghetti",
-      "_category": "Pasta",
-      "_expirationDate": "01-01-2025",
-      "_type": "NoRefrigerated"
-    },
-    {
-      "_codProduct": "00004",
-      "_name": "Caffe Borbone",
-      "_category": "Caffe",
-      "_expirationDate": "03-04-2024",
-      "_type": "NoRefrigerated"
-    }
-
-  ],
+  "_productCodeList": ["00003", "00004"],
   "_codOrder": "000549"
 }

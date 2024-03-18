@@ -38,11 +38,11 @@ describe('Order services testing', () => {
     });
 
     it('it should return 401 if the data are invalid', async () => {
-        const res=mockResponse()
+        const res = mockResponse()
         req.body = {
             _date: "14/03/2024",
             _status: "",
-            _productList: ""
+            _productCodeList: ""
         }
 
         await generateOrder(req, res)
@@ -52,26 +52,11 @@ describe('Order services testing', () => {
     });
 
     it('it should return 200 if the order generation is successful', async () => {
-        const res=mockResponse()
+        const res = mockResponse()
         req.body = {
             _date: "14/03/2024",
             _status: "pending",
-            _productList: [
-                {
-                    "_codProduct": "00020",
-                    "_name": "Loacker",
-                    "_category": "Snack",
-                    "_expirationDate": "01-01-2025",
-                    "_type": "NoRefrigerated"
-                },
-                {
-                    "_codProduct": "00024",
-                    "_name": "Caffe Lavazza",
-                    "_category": "Caffe",
-                    "_expirationDate": "03-04-2024",
-                    "_type": "NoRefrigerated"
-                }
-            ]
+            _productCodeList: [ "00020", "00024" ]
         }
 
         await generateOrder(req, res)
@@ -79,8 +64,8 @@ describe('Order services testing', () => {
         expect(res.status).toHaveBeenCalledWith(200)
     });
 
-    it('it should return 200 and all orders that are stored', async() =>{
-        const res=mockResponse()
+    it('it should return 200 and all orders that are stored', async() => {
+        const res = mockResponse()
 
         await getAll(req, res)
 
@@ -88,8 +73,8 @@ describe('Order services testing', () => {
         expect(res.json).not.toBeNull()
     })
 
-    it('it should return 200 and the order with the code specified', async ()=>{
-        const res=mockResponse()
+    it('it should return 200 and the order with the code specified', async () => {
+        const res = mockResponse()
         req.params = { codOrder: "000549" }
 
         await getOrderByCode(req, res)
@@ -97,8 +82,8 @@ describe('Order services testing', () => {
         expect(res.json).not.toBeNull()
     })
 
-    it('it should return 401 if the code is wrong', async ()=>{
-        const res=mockResponse()
+    it('it should return 401 if the code is wrong', async () => {
+        const res = mockResponse()
         req.params = { codOrder: "000877" }
 
         await getOrderByCode(req, res)
@@ -106,8 +91,8 @@ describe('Order services testing', () => {
         expect(res.json).toHaveBeenCalledWith({message: "Order not found"})
     })
 
-    it('it should return 401 if the code is not specified', async ()=>{
-        const res=mockResponse()
+    it('it should return 401 if the code is not specified', async () => {
+        const res = mockResponse()
         req.params = { codOrder: "" }
 
         await getOrderByCode(req, res)
@@ -115,8 +100,8 @@ describe('Order services testing', () => {
         expect(res.json).toHaveBeenCalledWith({message: "Invalid order data"})
     })
 
-    it('it should return 200 and the order updated with a new status', async ()=>{
-        const res=mockResponse()
+    it('it should return 200 and the order updated with a new status', async () => {
+        const res = mockResponse()
         const req = {
             params: {
                 codOrder: "000549"
@@ -131,12 +116,12 @@ describe('Order services testing', () => {
         expect(res.json).not.toBeNull()
     })
 
-    it('it should return 401 if updating order status without correct order code', async ()=>{
-        const res=mockResponse()
+    it('it should return 401 if updating order status without correct order code', async () => {
+        const res = mockResponse()
         const req = {
             params: {
                 codOrder: "000877"
-            },body:{
+            }, body:{
                 _status: "Completed"
             }
         };
@@ -146,12 +131,12 @@ describe('Order services testing', () => {
         expect(res.json).toHaveBeenCalledWith({message: "Order not found"})
     })
 
-    it('it should return 401 if updating order status without specified the order code', async ()=>{
-        const res=mockResponse()
+    it('it should return 401 if updating order status without specified the order code', async () => {
+        const res = mockResponse()
         const req = {
             params: {
                 codOrder: ""
-            },body:{
+            }, body:{
                 _status: "Completed"
             }
         };
