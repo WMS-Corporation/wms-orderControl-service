@@ -52,9 +52,24 @@ const updateOrderData = asyncHandler(async(filter, update) => {
     return await collections?.orders?.findOne(filter)
 })
 
+/**
+ * Generates a unique order code.
+ *
+ * This function generates a unique order code by retrieving the next available code from the counter collection,
+ * incrementing the count, and returning the next code as a string padded with zeros to ensure a fixed length of 6 characters.
+ *
+ * @returns {string} The next unique order code.
+ */
+const generateUniqueOrderCode = asyncHandler (async () => {
+    const nextCode = await collections?.counter?.findOne()
+    await collections.counter.updateOne({}, { $inc: {count: 1}})
+    return nextCode.count.toString().padStart(6, '0')
+})
+
 module.exports = {
     createOrder,
     getOrders,
     findOrderByCode,
-    updateOrderData
+    updateOrderData,
+    generateUniqueOrderCode
 }

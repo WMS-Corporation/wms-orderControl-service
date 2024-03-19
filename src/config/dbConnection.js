@@ -22,6 +22,10 @@ async function connectDB(dbName) {
         const ordersCollection = db.instance.collection(process.env.ORDER_COLLECTION);
         collections.orders = ordersCollection;
         collections.users = db.instance.collection(process.env.USER_COLLECTION);
+        collections.counter = db.instance.collection(process.env.COUNTER_COLLECTION);
+        if(await collections.counter.countDocuments() === 0){
+            await collections.counter.insertOne({count : 1})
+        }
         console.log(`Successfully connected to database: ${db.instance.databaseName} and collection: ${ordersCollection.collectionName}`);
         return db;
     } catch (error) {

@@ -1,7 +1,7 @@
-const {db} = require("../config/dbConnection");
+
 const asyncHandler = require("express-async-handler");
 const {createOrderFromData} = require("../factories/orderFactory");
-const {createOrder, getOrders, findOrderByCode, updateOrderData} = require("../repositories/orderRepository");
+const {createOrder, getOrders, findOrderByCode, updateOrderData, generateUniqueOrderCode} = require("../repositories/orderRepository");
 
 /**
  * Generate a new order.
@@ -108,29 +108,6 @@ const updateOrderByCode = asyncHandler(async (req, res) => {
     }else{
         res.status(401).json({message:'Invalid order data'})
     }
-})
-
-/**
- * Generates a unique order code.
- *
- * This function generates a unique order code by counting the total number of documents across all collections in the database.
- * It connects to the appropriate database based on the environment (either test or production).
- * It then counts the total number of documents in each collection and calculates the next available order code.
- * The generated order code is padded with leading zeros to ensure it has a fixed length of 6 characters.
- *
- * @returns {string} The generated unique order code.
- */
-const generateUniqueOrderCode = asyncHandler (async () => {
-    const collections = await db.instance.listCollections().toArray()
-    let totalDocuments = 0
-    for (const collectionInfo of collections){
-        const collectionData = db.instance.collection(collectionInfo.name)
-        const count = await collectionData.countDocuments()
-        totalDocuments += count
-    }
-
-    const nextCode = totalDocuments + 1
-    return nextCode.toString().padStart(6, '0')
 })
 
 module.exports = {
