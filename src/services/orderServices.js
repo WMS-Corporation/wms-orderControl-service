@@ -95,13 +95,33 @@ const getOrderByCode = asyncHandler(async (req, res) => {
  */
 const updateOrderByCode = asyncHandler(async (req, res) => {
     const codOrder = req.params.codOrder
+
+    const validFields = [
+        "_date",
+        "_status",
+        "_productCodeList",
+    ];
+
+    let foundValidField = false;
+
+    for (const field of validFields) {
+        if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+            foundValidField = true
+            break;
+        }
+    }
+
     if(codOrder){
         const order = await findOrderByCode(codOrder)
         if(order){
-            const filter = { _codOrder: codOrder }
-            const update = { $set: req.body}
-            const updatedOrder = await updateOrderData(filter, update)
-            res.status(200).json(updatedOrder)
+            if(!foundValidField){
+                res.status(401).json({message: 'Order does not contain any of the specified fields.'})
+            } else {
+                const filter = { _codOrder: codOrder }
+                const update = { $set: req.body}
+                const updatedOrder = await updateOrderData(filter, update)
+                res.status(200).json(updatedOrder)
+            }
         } else{
             res.status(401).json({message: 'Order not found'})
         }

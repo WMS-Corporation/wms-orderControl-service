@@ -144,4 +144,20 @@ describe('Order services testing', () => {
         expect(res.status).toHaveBeenCalledWith(401)
         expect(res.json).toHaveBeenCalledWith({message: "Invalid order data"})
     })
+
+    it('it should return 401 if try to updating field that is not specified for the order ', async () => {
+        const res = mockResponse()
+        const req = {
+            params: {
+                codOrder: "000549"
+            }, body:{
+                _name: "Order 1"
+            }
+        };
+        await updateOrderByCode(req, res)
+        expect(res.status).toHaveBeenCalledWith(401)
+        expect(res.json).toHaveBeenCalledWith({message: "Order does not contain any of the specified fields."})
+    })
+
+
 });
