@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb');
 const { connectDB, collections, closeDB} = require('../src/config/dbConnection');
 const dotenv = require('dotenv');
+const {describe, it, expect, afterAll, beforeAll} = require('@jest/globals')
 
 dotenv.config();
 describe('Database Connection', () => {
