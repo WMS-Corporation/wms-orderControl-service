@@ -8,7 +8,7 @@ const router = require('./src/routes/route')
 * */
 const orderControlServicePort = process.env.PORT || 4004;
 let corsOptions = {
-    origin: new RegExp(`http:\/\/localhost:${orderControlServicePort}\/.*`),
+    origin: new RegExp(`http:\/\/wms-order:${orderControlServicePort}\/.*`),
 };
 dotenv.config();
 const app = express();
