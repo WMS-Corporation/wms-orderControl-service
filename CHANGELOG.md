@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.1](https://github.com/WMS-Corporation/wms-orderControl-service/compare/v1.0.0...v1.0.1) (2024-05-03)
+
+
+### Bug Fixes
+
+* Modified method that generated a unique order code ([bd6bced](https://github.com/WMS-Corporation/wms-orderControl-service/commit/bd6bcede0957f0c905aa964620242c62081a0a12))
+* Modified method that update order data ([6109dc4](https://github.com/WMS-Corporation/wms-orderControl-service/commit/6109dc4222f4c76425f8a240cbd99cb300a63570))
+* Refactored product structure within Order and added validation for product list updates ([6aa34ac](https://github.com/WMS-Corporation/wms-orderControl-service/commit/6aa34ac8a3554dbb613363dc18416a22341f4418))
+* Updated config file ([9e76958](https://github.com/WMS-Corporation/wms-orderControl-service/commit/9e769585e06f60a1d96c5fefd518744d02789909))
+
 ## 1.0.0 (2024-03-18)
 
 
