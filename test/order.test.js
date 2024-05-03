@@ -25,7 +25,7 @@ describe('Order testing', () => {
     });
 
     it('should return the number of products', () => {
-        expect(order.productCodeList.length).toBe(2);
+        expect(order.productList.length).toBe(2);
     });
 
     it('should set codTask correctly', () => {

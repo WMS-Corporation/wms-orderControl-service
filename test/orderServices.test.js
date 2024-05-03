@@ -49,7 +49,7 @@ describe('Order services testing', () => {
         await generateOrder(req, res)
 
         expect(res.status).toHaveBeenCalledWith(401)
-        expect(res.json).toHaveBeenCalledWith({ message: 'Invalid order data'})
+        expect(res.json).toHaveBeenCalledWith({ message: 'Invalid request body. Please ensure all required fields are included and in the correct format.'})
     });
 
     it('it should return 200 if the order generation is successful', async () => {
@@ -57,7 +57,13 @@ describe('Order services testing', () => {
         req.body = {
             _date: "14/03/2024",
             _status: "pending",
-            _productCodeList: [ "00020", "00024" ]
+            _productList: [{
+                "_codProduct": "000010",
+                "_quantity": 20
+            }, {
+                "_codProduct": "000034",
+                "_quantity": 30
+            }]
         }
 
         await generateOrder(req, res)
@@ -117,6 +123,27 @@ describe('Order services testing', () => {
         expect(res.json).not.toBeNull()
     })
 
+    it('it should return 200 and the order updated with a new product list', async () => {
+        const res = mockResponse()
+        const req = {
+            params: {
+                codOrder: "000549"
+            },
+            body:{
+                _productList: [
+                    {
+                        _codProduct: "001103",
+                        _quantity: 12
+                    }
+                ]
+            }
+        };
+
+        await updateOrderByCode(req, res)
+        expect(res.status).toHaveBeenCalledWith(200)
+        expect(res.json).not.toBeNull()
+    })
+
     it('it should return 401 if updating order status without correct order code', async () => {
         const res = mockResponse()
         const req = {
@@ -157,7 +184,7 @@ describe('Order services testing', () => {
         };
         await updateOrderByCode(req, res)
         expect(res.status).toHaveBeenCalledWith(401)
-        expect(res.json).toHaveBeenCalledWith({message: "Order does not contain any of the specified fields."})
+        expect(res.json).toHaveBeenCalledWith({message: "Invalid request body. Please ensure all required fields are included and in the correct format."})
     })
 
 });

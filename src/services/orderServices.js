@@ -16,9 +16,21 @@ const {createOrder, getOrders, findOrderByCode, updateOrderData, generateUniqueO
  * @returns {Object} The HTTP response with the order created.
  */
 const generateOrder = asyncHandler(async(req, res) => {
-    const order = createOrderFromData(req.body)
-    if( !order.date || !order.status || !order.productCodeList){
+    let order
+    if(verifyBodyFields(req.body, "Create")){
+        order = createOrderFromData(req.body)
+    } else {
+        return res.status(401).json({ message: 'Invalid request body. Please ensure all required fields are included and in the correct format.' })
+    }
+
+    if( !order.date || !order.status || !order.productList){
         return res.status(401).json({ message: 'Invalid order data' })
+    }
+
+    for(let product of order.productList){
+        if(!product._codProduct || !product._quantity){
+            return res.status(401).json({ message: 'Invalid product data' })
+        }
     }
 
     order.codOrder = await generateUniqueOrderCode()
@@ -96,32 +108,20 @@ const getOrderByCode = asyncHandler(async (req, res) => {
 const updateOrderByCode = asyncHandler(async (req, res) => {
     const codOrder = req.params.codOrder
 
-    const validFields = [
-        "_date",
-        "_status",
-        "_productCodeList",
-    ];
-
-    let foundValidField = false;
-
-    for (const field of validFields) {
-        if (Object.prototype.hasOwnProperty.call(req.body, field)) {
-            foundValidField = true
-            break;
-        }
+    if(!verifyBodyFields(req.body, "Update")){
+        return res.status(401).json({message: 'Invalid request body. Please ensure all required fields are included and in the correct format.'})
     }
 
     if(codOrder){
         const order = await findOrderByCode(codOrder)
         if(order){
-            if(!foundValidField){
-                res.status(401).json({message: 'Order does not contain any of the specified fields.'})
-            } else {
-                const filter = { _codOrder: codOrder }
-                const update = { $set: req.body}
-                const updatedOrder = await updateOrderData(filter, update)
-                res.status(200).json(updatedOrder)
+            const updateData = handleUpdateData(req.body, order)
+            if(!updateData){
+                return res.status(401).json({message: 'The products specified in the request body does not exist in the order\'s product list.'})
             }
+            const filter = { _codOrder: codOrder }
+            const updatedOrder = await updateOrderData(filter, updateData)
+            res.status(200).json(updatedOrder)
         } else{
             res.status(401).json({message: 'Order not found'})
         }
@@ -129,6 +129,96 @@ const updateOrderByCode = asyncHandler(async (req, res) => {
         res.status(401).json({message:'Invalid order data'})
     }
 })
+
+/**
+ * Function to handle updating order data based on the provided body and existing order.
+ *
+ * This function takes the update data from the request body and the existing order data.
+ * If product list is provided, it iterates through the products in the update data and updates the corresponding products in the existing order.
+ * If a product to be updated does not exist in the existing order, it adds the new product to the order.
+ * The updated order data, including the modified product list, is returned.
+ * If no product list is provided in the update data, the entire body is treated as the update, excluding the product list.
+ *
+ * @param {Object} body - The body containing the update data.
+ * @param {Object} order - The existing order data.
+ * @return {Object|null} - The update object or null if any product to be updated does not exist.
+ **/
+const handleUpdateData = (body, order) => {
+    if (body._productList) {
+        const productListToUpdate  = body._productList
+        const orderProductMap = new Map(order._productList.map((product) => [product._codProduct, product]))
+
+        const update = { $set: {} };
+        Object.keys(body).forEach(key => {
+            if (key !== '_productList') {
+                update.$set[key] = body[key];
+            }
+        });
+
+        productListToUpdate.forEach(productToUpdate => {
+            let product = orderProductMap.get(productToUpdate._codProduct)
+            if(product){
+                Object.keys(productToUpdate).forEach(field => {
+                    product[field] = productToUpdate[field]
+                });
+            } else {
+                orderProductMap.set(productToUpdate._codProduct, productToUpdate)
+            }
+        })
+        update.$set["_productList"] = Array.from(orderProductMap.values())
+        return update;
+    } else {
+        return { $set: body }
+    }
+}
+
+/**
+ * Function to verify the fields in the request body based on the operation type.
+ *
+ * This function checks whether the fields in the request body are valid for the specified operation type,
+ * such as "Create" or "Update".
+ * It validates the presence and correctness of required fields depending on the operation.
+ * Returns true if all fields are valid; otherwise, returns false.
+ *
+ * @param {Object} body - The request body to be verified.
+ * @param {string} operation - The type of operation (e.g., "Create" or "Update").
+ * @return {boolean} - Indicates whether the fields in the body are valid for the specified operation.
+ **/
+
+const verifyBodyFields = (body, operation) => {
+    const orderValidFields = [
+        "_date",
+        "_status",
+        "_productList",
+    ];
+
+    const productValidFields = [
+        "_codProduct",
+        "_quantity"
+    ];
+
+    const validateFields = (fields, body, requireAll) => {
+        const presentFields = Object.keys(body);
+        const missingFields = fields.filter(field => !presentFields.includes(field));
+
+        if (requireAll) {
+            return missingFields.length === 0 && presentFields.length === fields.length;
+        } else {
+            if(presentFields.length === 1 && presentFields[0] === "_codProduct")
+                return false
+            else
+                return presentFields.every(field => fields.includes(field));
+        }
+    };
+
+    if (operation === "Create") {
+        return validateFields(orderValidFields, body, true) &&
+            body._productList.every(product => validateFields(productValidFields,  product, true ));
+    } else {
+        return validateFields(orderValidFields, body) &&
+            (!body._productList || body._productList.every(product => (validateFields(productValidFields, product)) && product._codProduct));
+    }
+}
 
 module.exports = {
     generateOrder,

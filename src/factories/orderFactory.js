@@ -8,7 +8,7 @@ const {Order} = require ('../entities/order')
  * @returns {Order} The newly created Order object.
  */
 function createOrderFromData(orderData) {
-    return new Order(orderData._date, orderData._status, orderData._productCodeList, orderData._codOrder);
+    return new Order(orderData._date, orderData._status, orderData._productList, orderData._codOrder);
 }
 
 module.exports = {createOrderFromData}

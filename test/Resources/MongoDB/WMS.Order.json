@@ -1,6 +1,12 @@
 {
   "_date": "20/03/2023",
   "_status": "pending",
-  "_productCodeList": ["00003", "00004"],
+  "_productList": [{
+    "_codProduct": "000003",
+    "_quantity": 10
+  },{
+    "_codProduct": "000004",
+    "_quantity": 20
+  }],
   "_codOrder": "000549"
 }

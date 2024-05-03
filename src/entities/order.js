@@ -1,9 +1,9 @@
 class Order {
 
-    constructor(date, status, productCodeList, codOrder) {
+    constructor(date, status, productList, codOrder) {
         this._date = date
         this._status = status
-        this._productCodeList = productCodeList
+        this._productList = productList
         this._codOrder = codOrder
     }
 
@@ -23,12 +23,12 @@ class Order {
         this._status = value;
     }
 
-    get productCodeList() {
-        return this._productCodeList;
+    get productList() {
+        return this._productList;
     }
 
-    set productCodeList(value) {
-        this._productCodeList = value;
+    set productList(value) {
+        this._productList = value;
     }
 
     get codOrder() {

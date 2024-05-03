@@ -31,7 +31,7 @@ const getOrders = asyncHandler(async () => {
  * This function queries the database to find an order based on the provided code.
  *
  * @param {string} codOrder - The code of the order to find.
- * @returns {Object|null} The task object if found, or null if not found.
+ * @returns {Object|null} The order object if found, or null if not found.
  */
 const findOrderByCode = asyncHandler(async (codOrder) => {
     return await collections?.orders?.findOne({ _codOrder: codOrder })
@@ -44,7 +44,7 @@ const findOrderByCode = asyncHandler(async (codOrder) => {
  *
  * @param {Object} filter - The filter criteria to find the order(s) to update.
  * @param {Object} update - The update object containing the fields to update and their new values.
- * @returns {Object|null} The updated order data if the user is found, otherwise null.
+ * @returns {Object|null} The updated order data if the order is found, otherwise null.
  */
 const updateOrderData = asyncHandler(async(filter, update) => {
     const options = { returnOriginal: false}

@@ -28,7 +28,6 @@ const verifyToken = asyncHandler(async(req, res, next) => {
     }
 
     if (req.method === "GET" || req.method === "POST" || req.method === "PUT") {
-        // Controllo del tipo di utente
         if (req.user._type !== "Admin") {
             return res.status(401).json({ message: "Only admin users can perform this action" });
         }
