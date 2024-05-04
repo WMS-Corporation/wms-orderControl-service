@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/WMS-Corporation/wms-orderControl-service/compare/v1.0.1...v1.0.2) (2024-05-04)
+
+
+### Bug Fixes
+
+* Updated method that modified an order data ([0d6942a](https://github.com/WMS-Corporation/wms-orderControl-service/commit/0d6942aaa47118e0f4f74b15fdf59630c1865e43))
+
 ## [1.0.1](https://github.com/WMS-Corporation/wms-orderControl-service/compare/v1.0.0...v1.0.1) (2024-05-03)
 
 
