@@ -128,48 +128,6 @@ const updateOrderByCode = asyncHandler(async (req, res) => {
 })
 
 /**
- * Function to handle updating order data based on the provided body and existing order.
- *
- * This function takes the update data from the request body and the existing order data.
- * If product list is provided, it iterates through the products in the update data and updates the corresponding products in the existing order.
- * If a product to be updated does not exist in the existing order, it adds the new product to the order.
- * The updated order data, including the modified product list, is returned.
- * If no product list is provided in the update data, the entire body is treated as the update, excluding the product list.
- *
- * @param {Object} body - The body containing the update data.
- * @param {Object} order - The existing order data.
- * @return {Object|null} - The update object or null if any product to be updated does not exist.
- **/
-const handleUpdateData = (body, order) => {
-    if (body._productList) {
-        const productListToUpdate  = body._productList
-        const orderProductMap = new Map(order._productList.map((product) => [product._codProduct, product]))
-
-        const update = { $set: {} };
-        Object.keys(body).forEach(key => {
-            if (key !== '_productList') {
-                update.$set[key] = body[key];
-            }
-        });
-
-        productListToUpdate.forEach(productToUpdate => {
-            let product = orderProductMap.get(productToUpdate._codProduct)
-            if(product){
-                Object.keys(productToUpdate).forEach(field => {
-                    product[field] = productToUpdate[field]
-                });
-            } else {
-                orderProductMap.set(productToUpdate._codProduct, productToUpdate)
-            }
-        })
-        update.$set["_productList"] = Array.from(orderProductMap.values())
-        return update;
-    } else {
-        return { $set: body }
-    }
-}
-
-/**
  * Function to verify the fields in the request body based on the operation type.
  *
  * This function checks whether the fields in the request body are valid for the specified operation type,
