@@ -115,12 +115,9 @@ const updateOrderByCode = asyncHandler(async (req, res) => {
     if(codOrder){
         const order = await findOrderByCode(codOrder)
         if(order){
-            const updateData = handleUpdateData(req.body, order)
-            if(!updateData){
-                return res.status(401).json({message: 'The products specified in the request body does not exist in the order\'s product list.'})
-            }
+            const update = { $set: req.body }
             const filter = { _codOrder: codOrder }
-            const updatedOrder = await updateOrderData(filter, updateData)
+            const updatedOrder = await updateOrderData(filter, update)
             res.status(200).json(updatedOrder)
         } else{
             res.status(401).json({message: 'Order not found'})
