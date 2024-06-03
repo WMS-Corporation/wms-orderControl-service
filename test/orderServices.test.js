@@ -11,12 +11,24 @@ const mockResponse = () => {
     res.status = jest.fn().mockReturnValue(res)
     res.json = jest.fn().mockReturnValue(res)
     return res
-};
+}
 const req = {
     body : "",
     user : "",
-    params: ""
+    params: "",
+    headers: {
+        authorization: 'Bearer some-token'
+    }
 }
+const mockFetch = jest.fn().mockImplementation(async (url, requestOptions) => {
+    const defaultResponse = {
+        ok: true,
+        json: async () => ({ someData: 'someValue' })
+    }
+
+    return Promise.resolve(defaultResponse);
+})
+global.fetch = mockFetch
 
 describe('Order services testing', () => {
 
@@ -50,7 +62,32 @@ describe('Order services testing', () => {
 
         expect(res.status).toHaveBeenCalledWith(401)
         expect(res.json).toHaveBeenCalledWith({ message: 'Invalid request body. Please ensure all required fields are included and in the correct format.'})
-    });
+    })
+
+    it('it should return 401 if the product is not defined', async () => {
+        const res = mockResponse()
+        req.params = { codCorridor: "002024"}
+        req.body = {
+            _date: "14/03/2024",
+            _status: "pending",
+            _productList: [{
+                "_codProduct": "000012",
+                "_quantity": 20
+            }, {
+                "_codProduct": "000036",
+                "_quantity": 30
+            }]
+        }
+
+        mockFetch.mockResolvedValueOnce({
+            ok: false,
+            status: 401
+        });
+        await generateOrder(req, res)
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Product not defined.' });
+    })
 
     it('it should return 200 if the order generation is successful', async () => {
         const res = mockResponse()
@@ -125,19 +162,13 @@ describe('Order services testing', () => {
 
     it('it should return 200 and the order updated with a new product list', async () => {
         const res = mockResponse()
-        const req = {
-            params: {
-                codOrder: "000549"
-            },
-            body:{
-                _productList: [
-                    {
-                        _codProduct: "001103",
-                        _quantity: 12
-                    }
-                ]
-            }
-        };
+        req.params =  {codOrder: "000549"}
+        req.body = {_productList: [
+                {
+                    _codProduct: "001103",
+                    _quantity: 12
+                }
+            ]}
 
         await updateOrderByCode(req, res)
         expect(res.status).toHaveBeenCalledWith(200)
@@ -187,4 +218,26 @@ describe('Order services testing', () => {
         expect(res.json).toHaveBeenCalledWith({message: "Invalid request body. Please ensure all required fields are included and in the correct format."})
     })
 
-});
+    it('it should return 401 if try to updating shelf data with a new product that is not defined', async () => {
+        const res = mockResponse()
+        req.params = { codCorridor: "002024"}
+        req.body = {
+            _date: "14/03/2024",
+            _status: "pending",
+            _productList: [{
+                "_codProduct": "000012",
+                "_quantity": 20
+            }]
+        }
+
+        mockFetch.mockResolvedValueOnce({
+            ok: false,
+            status: 401
+        });
+        await updateOrderByCode(req, res)
+
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Product not defined.' });
+    });
+
+})

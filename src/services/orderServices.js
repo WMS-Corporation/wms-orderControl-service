@@ -31,6 +31,10 @@ const generateOrder = asyncHandler(async(req, res) => {
         if(!product._codProduct || !product._quantity){
             return res.status(401).json({ message: 'Invalid product data' })
         }
+        let responseProductService = await fetchData('http://localhost:4002/' + product._codProduct, req)
+        if(responseProductService.status === 401){
+            return res.status(401).json({ message: 'Product not defined.' })
+        }
     }
 
     order.codOrder = await generateUniqueOrderCode()
@@ -112,20 +116,60 @@ const updateOrderByCode = asyncHandler(async (req, res) => {
         return res.status(401).json({message: 'Invalid request body. Please ensure all required fields are included and in the correct format.'})
     }
 
+    if(req.body._productList){
+        for(let product of req.body._productList){
+            let responseProductService = await fetchData('http://localhost:4002/' + product._codProduct, req)
+            if(responseProductService.status === 401){
+                return res.status(401).json({ message: 'Product not defined.' })
+            }
+        }
+    }
+
     if(codOrder){
         const order = await findOrderByCode(codOrder)
         if(order){
             const update = { $set: req.body }
             const filter = { _codOrder: codOrder }
             const updatedOrder = await updateOrderData(filter, update)
-            res.status(200).json(updatedOrder)
+            return res.status(200).json(updatedOrder)
         } else{
-            res.status(401).json({message: 'Order not found'})
+            return res.status(401).json({message: 'Order not found'})
         }
     }else{
-        res.status(401).json({message:'Invalid order data'})
+        return res.status(401).json({message:'Invalid order data'})
     }
 })
+
+/**
+ * Fetches data from the specified URL using the provided request options.
+ *
+ * @param {string} url - The URL to fetch data from.
+ * @param {Object} req - The request object containing headers and user information.
+ * @returns {Promise<Object>} A promise that resolves to an object containing the status and data.
+ *                           - { status: 200, data } if the request is successful.
+ *                           - { status: 401 } if the response is not OK.
+ *                           - { status: 500 } if there is an error during the request.
+ */
+const fetchData = async (url, req) => {
+    let authorization = req.headers.authorization
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Authorization': authorization},
+        user: req.user
+    }
+
+    try {
+        const response = await fetch(url, requestOptions)
+        if (!response.ok) {
+            return { status: 401 }
+        }
+        const data = await response.json()
+        return { status: 200, data }
+    } catch (error) {
+        console.error('Error during the request:', error)
+        return { status: 500 }
+    }
+}
 
 /**
  * Function to verify the fields in the request body based on the operation type.
@@ -179,5 +223,6 @@ module.exports = {
     generateOrder,
     getAll,
     getOrderByCode,
-    updateOrderByCode
+    updateOrderByCode,
+    fetchData
 }
