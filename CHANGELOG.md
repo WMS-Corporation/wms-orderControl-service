@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/WMS-Corporation/wms-orderControl-service/compare/v1.0.1...v1.1.0) (2024-06-30)
+
+
+### Features
+
+* Validate product existence when creating and modifying orders ([f8bd396](https://github.com/WMS-Corporation/wms-orderControl-service/commit/f8bd39659437c64d9bd51f49459ff8dc4f76e2bb))
+
+
+### Bug Fixes
+
+* Updated method that modified an order data ([0d6942a](https://github.com/WMS-Corporation/wms-orderControl-service/commit/0d6942aaa47118e0f4f74b15fdf59630c1865e43))
+
 ## [1.0.1](https://github.com/WMS-Corporation/wms-orderControl-service/compare/v1.0.0...v1.0.1) (2024-05-03)
 
 
